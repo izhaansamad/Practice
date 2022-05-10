@@ -1,0 +1,60 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class PlayerController : MonoBehaviour
+{
+
+    Vector3 moveDirection;
+    public Rigidbody rb;
+    public int speed = 20;
+    int score=0;
+    public Text scorecount;
+    public GameObject GameOver;
+    public Text HighScore;
+
+
+
+    private void Start()
+    {
+        HighScore.text = PlayerPrefs.GetInt("HighScore").ToString();
+
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Coin"))
+        {
+            Destroy(collision.gameObject);
+            score += 10;
+            scorecount.text = score.ToString();
+
+
+            if (score >= PlayerPrefs.GetInt("HighScore"))
+            {
+                PlayerPrefs.SetInt("HighScore", score);
+            }
+            HighScore.text = PlayerPrefs.GetInt("HighScore").ToString();
+
+        }
+        else if(collision.gameObject.CompareTag("Bomb"))
+        {
+            Destroy(gameObject);
+            GameOver.SetActive(true);
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        float moveX = Input.GetAxis("Horizontal");
+        moveDirection = new Vector3(moveX, 0, 0);
+    }
+    private void FixedUpdate()
+    {
+        rb.velocity = new Vector3(moveDirection.x * speed, 0, 0);
+    }
+        
+
+    
+}
